@@ -1,17 +1,24 @@
 const router = require('express').Router()
-const { faker } = require('@faker-js/faker')
+const ProductsService = require('../services/products.service')
 
-router.get('/', (req, res) => {
-    const products = []
+const service = new ProductsService()
 
-    for (let index = 0; index < 100; index++) {
-        products.push({
-            name: faker.commerce.productName(),
-            price: Number(faker.commerce.price()),
-            image: faker.image.url()
-        })
-    }
-    res.json(products)
+router.get('/seeds', (req, res) => {
+    service.createSeeds()
+    res.send('Seeds created')
+})
+
+router.get('/', (req, res) => res.json(service.find()))
+
+router.get('/:id', (req, res) => res.json(service.findOne(req.params.id)))
+
+router.post('/', (req, res) => res.status(201).json(service.create(req.body)))
+
+router.patch('/:id', (req, res) => res.json(service.update(req.params.id, req.body)))
+
+router.delete('/:id', (req, res) => {
+    service.delete(req.params.id)
+    res.status(204).end()
 })
 
 module.exports = router
