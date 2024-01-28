@@ -1,4 +1,5 @@
 const { faker } = require('@faker-js/faker')
+const CustomError = require('../CustomError')
 
 class ProductsService {
 
@@ -26,12 +27,18 @@ class ProductsService {
     }
 
     findIndex(id) {
-        return this.products.findIndex(product => product.id === id)
+        const productIndex = this.products.findIndex(product => product.id === id)
+        if(productIndex === -1) {
+            throw new CustomError("Product not found", 404)
+        }
+
+        return productIndex
     }
 
     findOne(id) {
-        const productFound = this.products.find(product => product.id === id)
-        return productFound
+        const productIndex = this.findIndex(id)
+
+        return this.products[productIndex]
     }
 
     create(productData) {
@@ -59,6 +66,8 @@ class ProductsService {
     }
 
     delete(productId) {
+        this.findIndex(productId)
+
         const products = this.products.filter(product => product.id !== productId)
         this.products = products
     }
