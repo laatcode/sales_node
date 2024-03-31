@@ -10,7 +10,10 @@ router.get('/seeds', (req, res) => {
     res.send('Seeds created')
 })
 
-router.get('/', (req, res) => res.json(service.find()))
+router.get('/', async (req, res) => {
+    const result = await service.find()
+    res.json(result)
+})
 
 router.get('/:id', validationHandler(getProductSchema, 'params'), (req, res) => res.json(service.findOne(req.params.id)))
 

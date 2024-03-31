@@ -1,10 +1,13 @@
 const { faker } = require('@faker-js/faker')
 const CustomError = require('../CustomError')
+const pool = require('../libs/postgres')
 
 class ProductsService {
 
     constructor() {
         this.products = []
+        this.pool = pool
+        this.pool.on("error", err => console.error(err))
     }
 
     createSeeds() {
@@ -22,8 +25,10 @@ class ProductsService {
         }
     }
 
-    find() {
-        return this.products
+    async find() {
+        const query = 'SELECT * FROM tasks'
+        const response = await this.pool.query(query)
+        return response.rows
     }
 
     findIndex(id) {
