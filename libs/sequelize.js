@@ -13,6 +13,4 @@ const sequelize = new Sequelize(URI, {
 
 setupModels(sequelize) //Relaciona la conexión con los modelos definidos
 
-sequelize.sync() //Toma la información de los modelos y crea las estructuras de las tablas sincronizando así la información
-
 module.exports = sequelize
