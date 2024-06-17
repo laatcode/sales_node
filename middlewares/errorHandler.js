@@ -7,8 +7,9 @@ const ormErrorHandler = (err, req, res, next) => {
             message: err.name,
             errors: err.errors
         })
+    } else {
+        next(err)
     }
-    next(err)
 }
 
 const errorHandler = (err, req, res, next) => {
