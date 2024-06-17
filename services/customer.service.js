@@ -4,7 +4,7 @@ const { models } = require('../libs/sequelize')
 class CustomerService {
 
     async findOne(id) {
-        const customerFound = await models.Customer.findByPk(id)
+        const customerFound = await models.Customer.findByPk(id, { include: ['user'] })
         if(!customerFound) {
             throw new CustomError("Customer not found", 404)
         }
@@ -19,8 +19,15 @@ class CustomerService {
     }
 
     async create(data) {
+        if(!data.userId) {
+            const newUser = await models.User.create(data.user)
+            data = {
+                ...data,
+                userId: newUser.id
+            }
+        }
         const newCustomer = await models.Customer.create(data)
-        return newCustomer
+        return await this.findOne(newCustomer.id)
     }
 
     async update(id, changes) {
