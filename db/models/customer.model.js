@@ -1,4 +1,3 @@
-// File: /db/models/customer.model.js
 const { Model, DataTypes, Sequelize } = require('sequelize')
 const { TABLE: USER_TABLE } = require('./user.model')
 
@@ -45,12 +44,14 @@ const CustomerSchema = {
 }
 
 class Customer extends Model {
-    // Asociaciones
     static associate(models) {
         this.belongsTo(models.User, { as: 'user' })
+        this.hasMany(models.Order, {
+            as: 'orders',
+            foreignKey: 'customerId'
+        })
     }
 
-    // Recibe una conexión y retorna una configuración
     static config(sequelize) {
         return {
             sequelize,

@@ -4,7 +4,7 @@ const { models } = require('../libs/sequelize')
 class CustomerService {
 
     async findOne(id) {
-        const customerFound = await models.Customer.findByPk(id, { include: ['user'] })
+        const customerFound = await models.Customer.findByPk(id, { include: ['user', 'orders'] })
         if(!customerFound) {
             throw new CustomError("Customer not found", 404)
         }
@@ -13,7 +13,7 @@ class CustomerService {
 
     async find() {
         const rta = await models.Customer.findAll({
-            include: ['user']
+            include: ['user', 'orders']
         })
         return rta
     }
