@@ -1,81 +1,37 @@
-const { faker } = require('@faker-js/faker')
 const CustomError = require('../CustomError')
-const pool = require('../libs/postgres')
+const { models } = require('../libs/sequelize')
 
-class ProductsService {
+class ProductService {
 
-    constructor() {
-        this.products = []
-        this.pool = pool
-        this.pool.on("error", err => console.error(err))
-    }
-
-    createSeeds() {
-        this.products = []
-        for (let index = 0; index < 100; index++) {
-            const product = {
-                id: faker.string.uuid(),
-                name: faker.commerce.productName(),
-                price: Number(faker.commerce.price({
-                    min: 2000,
-                    max: 120000
-                }))
-            }
-            this.products.push(product)
+    async findOne(id) {
+        const productFound = await models.Product.findByPk(id, { include: 'category' })
+        if(!productFound) {
+            throw new CustomError("Product not found", 404)
         }
+        return productFound
     }
 
     async find() {
-        const query = 'SELECT * FROM tasks'
-        const response = await this.pool.query(query)
-        return response.rows
+        const rta = await models.Product.findAll({ include: 'category' })
+        return rta
     }
 
-    findIndex(id) {
-        const productIndex = this.products.findIndex(product => product.id === id)
-        if(productIndex === -1) {
-            throw new CustomError("Product not found", 404)
-        }
-
-        return productIndex
+    async create(data) {
+        const newProduct = await models.Product.create(data)
+        return await this.findOne(newProduct.id)
     }
 
-    findOne(id) {
-        const productIndex = this.findIndex(id)
-
-        return this.products[productIndex]
+    async update(id, changes) {
+        const productFound = await this.findOne(id)
+        const rta = await productFound.update(changes)
+        return rta
     }
 
-    create(productData) {
-        const newProduct = {
-            id: faker.string.uuid(),
-            ...productData
-        }
-
-        this.products.push(newProduct)
-        return newProduct
-    }
-
-    update(productId, productData) {
-        const productIndex = this.findIndex(productId)
-
-        const updatedProduct = {
-            ...this.products[productIndex],
-            ...productData,
-            id: productId
-        }
-
-        this.products[productIndex] = updatedProduct
-
-        return updatedProduct
-    }
-
-    delete(productId) {
-        this.findIndex(productId)
-
-        const products = this.products.filter(product => product.id !== productId)
-        this.products = products
+    async delete(id) {
+        const productFound = await this.findOne(id)
+        await productFound.destroy()
+        return { id }
     }
 }
 
-module.exports = ProductsService
+module.exports = ProductService
