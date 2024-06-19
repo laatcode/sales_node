@@ -11,8 +11,20 @@ class ProductService {
         return productFound
     }
 
-    async find() {
-        const rta = await models.Product.findAll({ include: 'category' })
+    async find(query) {
+
+        const options = {
+            include: ['category']
+        }
+
+        const { limit, offset } = query
+
+        if(limit && offset) {
+            options.limit = Number(limit)
+            options.offset = Number(offset)
+        }
+
+        const rta = await models.Product.findAll(options)
         return rta
     }
 

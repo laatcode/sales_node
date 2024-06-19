@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const validationHandler = require('../middlewares/validationHandler')
-const { getProductSchema, createProductSchema, updateProductSchema } = require('../schemas/product.schema')
+const { getProductSchema, createProductSchema, updateProductSchema, queryProductSchema } = require('../schemas/product.schema')
 const ProductService = require('../services/products.service')
 
 const service = new ProductService()
@@ -10,10 +10,12 @@ const service = new ProductService()
 //     res.send('Seeds created')
 // })
 
-router.get('/', async (req, res) => {
-    const result = await service.find()
-    res.json(result)
-})
+router.get('/',
+    validationHandler(queryProductSchema, 'params'),
+    async (req, res, next) => service.find(req.query)
+        .then(data => res.json(data))
+        .catch(error => next(error))
+)
 
 router.get('/:id',
     validationHandler(getProductSchema, 'params'),
