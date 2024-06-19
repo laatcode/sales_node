@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const validationHandler = require('../middlewares/validationHandler')
-const { getOrderSchema, createOrderSchema, updateOrderSchema } = require('../schemas/order.schema')
+const { getOrderSchema, createOrderSchema, updateOrderSchema, addItemSchema } = require('../schemas/order.schema')
 const OrderService = require('../services/order.service')
 
 const service = new OrderService()
@@ -41,6 +41,13 @@ router.delete('/:id',
     validationHandler(getOrderSchema, 'params'),
     (req, res, next) => service.delete(req.params.id)
         .then(() => res.status(204).end())
+        .catch(error => next(error))
+)
+
+router.post('/add_item',
+    validationHandler(addItemSchema, 'body'),
+    (req, res, next) => service.addItem(req.body)
+        .then(data => res.status(201).json(data))
         .catch(error => next(error))
 )
 

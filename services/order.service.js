@@ -4,7 +4,12 @@ const { models } = require('../libs/sequelize')
 class OrderService {
 
     async findOne(id) {
-        const orderFound = await models.Order.findByPk(id, { include: ['customer'] })
+        const orderFound = await models.Order.findByPk(id, {
+            include: [{
+                association: 'customer',
+                include: ['user']
+            }, 'items']
+        })
         if(!orderFound) {
             throw new CustomError("Order not found", 404)
         }
@@ -34,6 +39,11 @@ class OrderService {
         const orderFound = await this.findOne(id)
         await orderFound.destroy()
         return { id }
+    }
+
+    async addItem(data) {
+        const newItem = await models.OrderProduct.create(data)
+        return await this.findOne(newItem.orderId)
     }
 }
 
