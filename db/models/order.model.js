@@ -1,6 +1,5 @@
 const { Model, DataTypes, Sequelize } = require('sequelize')
 const { TABLE: CUSTOMER_TABLE } = require('./customer.model')
-const { types } = require('joi')
 
 const TABLE = 'orders'
 
@@ -27,17 +26,6 @@ const OrderSchema = {
         allowNull: false,
         field: 'created_at',
         defaultValue: Sequelize.NOW
-    },
-    total: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            if(this.items.length > 0) {
-                return this.items.reduce((total, item) => {
-                    return total + (item.price * item.OrderProduct.amount)
-                }, 0)
-            }
-            return 0
-        }
     }
 }
 

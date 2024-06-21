@@ -24,8 +24,7 @@ const ProductSchema = {
     },
     image: {
         type: DataTypes.STRING,
-        allowNull: false,
-        field: 'last_name'
+        allowNull: false
     },
     createdAt: {
         type: DataTypes.DATE,
