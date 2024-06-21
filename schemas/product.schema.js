@@ -10,6 +10,8 @@ const categoryId = Joi.number().integer()
 const limit = Joi.number().integer()
 const offset = Joi.number().integer()
 
+const productsQty = Joi.number().integer()
+
 const createProductSchema = Joi.object({
     name: name.required(),
     description: description.required(),
@@ -35,9 +37,14 @@ const queryProductSchema = Joi.object({
     offset
 })
 
+const querySeedsSchema = Joi.object({
+    productsQty: productsQty.required()
+})
+
 module.exports = {
     createProductSchema,
     updateProductSchema,
     getProductSchema,
-    queryProductSchema
+    queryProductSchema,
+    querySeedsSchema
 }
