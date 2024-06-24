@@ -34,7 +34,8 @@ const getProductSchema = Joi.object({
 
 const queryProductSchema = Joi.object({
     limit,
-    offset
+    offset,
+    price
 })
 
 const querySeedsSchema = Joi.object({
