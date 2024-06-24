@@ -14,7 +14,7 @@ router.get('/seeds',
 )
 
 router.get('/',
-    validationHandler(queryProductSchema, 'params'),
+    validationHandler(queryProductSchema, 'query'),
     async (req, res, next) => service.find(req.query)
         .then(data => res.json(data))
         .catch(error => next(error))
